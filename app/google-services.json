@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "875204078385",
+    "project_id": "selfdestructingmessenger",
+    "storage_bucket": "selfdestructingmessenger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875204078385:android:3924accbccc9ee5e559e10",
+        "android_client_info": {
+          "package_name": "com.example.selfdestructing_messenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjoYSl2QyBrjLKkq47dubz1UFO5bN23M4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
