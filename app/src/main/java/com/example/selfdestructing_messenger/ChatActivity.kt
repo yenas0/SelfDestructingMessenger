@@ -24,6 +24,8 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        val currentUserId = "user1"  // 고정된 값 혹은 로그인 정보에서 가져옴
+
         mDatabase = FirebaseDatabase.getInstance().getReference("messages")
         messageList = mutableListOf()
 
@@ -31,14 +33,15 @@ class ChatActivity : AppCompatActivity() {
         messageInput = findViewById(R.id.messageInput)
         sendButton = findViewById(R.id.sendButton)
 
-        adapter = MessageAdapter(this, messageList)
+        adapter = MessageAdapter(this, messageList, currentUserId)
         listView.adapter = adapter
 
         sendButton.setOnClickListener {
-            sendMessage()
+            sendMessage(currentUserId)
         }
 
-        mDatabase.addValueEventListener(object : ValueEventListener {
+        // Update this block to your existing code for retrieving messages from Firebase
+        mDatabase.orderByChild("timestamp").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 messageList.clear()
                 for (snapshot in dataSnapshot.children) {
@@ -48,6 +51,7 @@ class ChatActivity : AppCompatActivity() {
                     }
                 }
                 adapter.notifyDataSetChanged()
+                listView.smoothScrollToPosition(adapter.count - 1)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -56,14 +60,20 @@ class ChatActivity : AppCompatActivity() {
         })
     }
 
-    private fun sendMessage() {
+    private fun sendMessage(senderId: String) {
         val messageText = messageInput.text.toString()
         if (!TextUtils.isEmpty(messageText)) {
             val key = mDatabase.push().key
-            val message = Message(messageText)
+            val message = Message(messageText, System.currentTimeMillis(), senderId)
             if (key != null) {
                 mDatabase.child(key).setValue(message)
-                messageInput.setText("")
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            messageInput.setText("")
+                        } else {
+                            // 메시지 전송 실패 처리
+                        }
+                    }
             }
         }
     }

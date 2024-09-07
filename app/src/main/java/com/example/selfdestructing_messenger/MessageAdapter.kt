@@ -11,13 +11,19 @@ import com.example.selfdestructing_messenger.models.Message
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MessageAdapter(context: Context, messages: List<Message>) :
+class MessageAdapter(context: Context, private val messages: List<Message>, private val currentUserId: String) :
     ArrayAdapter<Message>(context, 0, messages) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_message, parent, false)
-
         val message = getItem(position)
+
+        val layoutRes = if (message?.senderId == currentUserId) {
+            R.layout.item_message_sent
+        } else {
+            R.layout.item_message_received
+        }
+
+        val view = convertView ?: LayoutInflater.from(context).inflate(layoutRes, parent, false)
 
         val messageText = view.findViewById<TextView>(R.id.messageText)
         val messageTimestamp = view.findViewById<TextView>(R.id.messageTimestamp)
