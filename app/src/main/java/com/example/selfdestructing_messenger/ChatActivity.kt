@@ -19,12 +19,13 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var listView: ListView
     private lateinit var messageInput: EditText
     private lateinit var sendButton: Button
+    private lateinit var switchUserButton: Button
+
+    private var currentUserId: String = "user1" // Start with user1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-
-        val currentUserId = "user1"  // 고정된 값 혹은 로그인 정보에서 가져옴
 
         mDatabase = FirebaseDatabase.getInstance().getReference("messages")
         messageList = mutableListOf()
@@ -32,15 +33,21 @@ class ChatActivity : AppCompatActivity() {
         listView = findViewById(R.id.listView)
         messageInput = findViewById(R.id.messageInput)
         sendButton = findViewById(R.id.sendButton)
+        switchUserButton = findViewById(R.id.switchUserButton)
 
         adapter = MessageAdapter(this, messageList, currentUserId)
         listView.adapter = adapter
+
+        // Switch user on button click
+        switchUserButton.setOnClickListener {
+            switchUser()
+        }
 
         sendButton.setOnClickListener {
             sendMessage(currentUserId)
         }
 
-        // Update this block to your existing code for retrieving messages from Firebase
+        // Listen for new messages
         mDatabase.orderByChild("timestamp").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 messageList.clear()
@@ -70,11 +77,20 @@ class ChatActivity : AppCompatActivity() {
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
                             messageInput.setText("")
-                        } else {
-                            // 메시지 전송 실패 처리
                         }
                     }
             }
         }
+    }
+
+    // Function to switch between user1 and user2
+    private fun switchUser() {
+        if (currentUserId == "user1") {
+            currentUserId = "user2"
+        } else {
+            currentUserId = "user1"
+        }
+        adapter = MessageAdapter(this, messageList, currentUserId)
+        listView.adapter = adapter
     }
 }

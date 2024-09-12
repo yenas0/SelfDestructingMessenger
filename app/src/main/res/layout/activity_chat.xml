@@ -30,5 +30,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Send" />
+
+        <Button
+            android:id="@+id/switchUserButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Switch User"
+            android:layout_above="@+id/messageInputLayout"
+            android:layout_alignParentEnd="true"
+            android:padding="8dp"/>
+
     </LinearLayout>
 </LinearLayout>
